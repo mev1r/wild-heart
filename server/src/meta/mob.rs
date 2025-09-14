@@ -1,0 +1,1 @@
+pub const BASE_MOB_ATTACK: u64 = 10;

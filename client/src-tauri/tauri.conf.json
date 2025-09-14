@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "client",
+  "version": "0.1.0",
+  "identifier": "com.victor.client",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Wild Heart",
+        "width": 360,
+        "height": 440,
+        "minWidth": 360,
+        "minHeight": 440,
+        "maxWidth": 1600,
+        "maxHeight": 900,
+        "resizable": false,
+        "maximizable": false,
+        "fullscreen": false,
+        "decorations": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/128x128@2x.png"
+    ]
+  }
+}

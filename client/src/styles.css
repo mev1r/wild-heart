@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #A68B00;
+    --color-secondary: #2A2A2A;
+    --color-mana: #2A4E7E;
+    --color-shield: #4CB5C4;
+    --color-silver: #b0b0b0;
+    --color-danger: #8B3030;
+    --color-warning: #B88E2F;
+    --color-success: #3E6B48;
+    --color-global-chat: #C4C4C4;
+    --color-trade-chat: #49766D;
+    --color-whisper-chat: #8A5D7A;
+    --color-common: #D4D4D4;
+    --color-uncommon: #3A7040;
+    --color-rare: #275A8F;
+    --color-epic: #5A3A66;
+    --color-legendary: #A53A2A;
+    --color-input-bg: #0D0D10;
+    --color-slot: #0a0a0c;
+}
+
+* {
+    outline: none;
+    user-select: none;
+}
+
+html {
+    font-family: "Alegreya Sans SC", sans-serif;
+    font-feature-settings: "tnum";
+    font-variant-numeric: lining-nums tabular-nums;
+}
+
+.main-bg {
+    background: linear-gradient(130deg, rgba(10, 10, 12, 1) 0%, rgba(25, 25, 30, 1) 100%);
+}
+
+.main-bg-uncommon {
+    background: linear-gradient(150deg, rgba(10, 10, 12, 1) 40%, rgba(35, 50, 40, 0.6) 100%);
+}
+
+.main-bg-rare {
+    background: linear-gradient(150deg, rgba(10, 10, 12, 1) 40%, rgba(30, 40, 60, 0.6) 100%);
+}
+
+.main-bg-epic {
+    background: linear-gradient(150deg, rgba(10, 10, 12, 1) 40%, rgba(45, 30, 55, 0.6) 100%);
+}
+
+.main-bg-legendary {
+    background: linear-gradient(150deg, rgba(10, 10, 12, 1) 40%, rgba(65, 30, 25, 0.6) 100%);
+}
+
+.main-border {
+    @apply border border-solid border-t-secondary/70 border-x-secondary/50 border-b-secondary/30;
+}
+
+.main-border:focus {
+    @apply border border-solid border-t-secondary border-x-secondary/80 border-b-secondary/60;
+}
+
+.main-border-inverted {
+    @apply border border-solid border-t-secondary/30 border-x-secondary/50 border-b-secondary/70;
+}
+
+.main-border-inverted:focus {
+    @apply border border-solid border-t-secondary/60 border-x-secondary/80 border-b-secondary;
+}
+
+.main-border-hoverable {
+    @apply border border-solid border-t-secondary/70 border-x-secondary/50 border-b-secondary/30;
+}
+
+.main-border-hoverable:hover {
+    @apply border border-solid border-t-secondary border-x-secondary/80 border-b-secondary/60;
+}
+
+.main-border-hoverable-danger {
+    @apply border border-solid border-t-danger/50 border-x-danger/40 border-b-danger/30;
+}
+
+.main-border-hoverable-danger:hover {
+    @apply border border-solid border-t-danger/60 border-x-danger/50 border-b-danger/50;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
+.scroller {
+    overflow: auto;
+}
+
+.scroller::-webkit-scrollbar {
+    width: 0;
+}
+
+.scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroller:hover::-webkit-scrollbar-thumb {
+    @apply bg-primary/20;
+}
+
+.shadow-inner-custom {
+    box-shadow: inset 0 2px 4px #00000066, inset 0 -1px 2px #1a1a1c66;
+}
+
+.health-bg {
+    background: linear-gradient(180deg,rgba(166, 61, 61, 1) 0%, rgba(139, 48, 48, 1) 22%, rgba(128, 45, 45, 1) 50%, rgba(122, 44, 44, 1) 76%);
+}
+
+.mana-bg {
+    background: linear-gradient(180deg,rgba(50, 95, 153, 1) 0%, rgba(42, 78, 126, 1) 22%, rgba(36, 68, 110, 1) 50%, rgba(36, 63, 102, 1) 76%);
+}
+
+.energy-bg {
+    background: linear-gradient(180deg,rgba(74, 125, 84, 1) 0%, rgba(62, 107, 72, 1) 22%, rgba(54, 94, 65, 1) 50%, rgba(53, 89, 61, 1) 76%);
+}
+
+.spirit-bg {
+    background: linear-gradient(180deg,rgba(196, 153, 53, 1) 0%, rgba(184, 142, 47, 1) 22%, rgba(163, 127, 44, 1) 50%, rgba(153, 119, 41, 1) 76%);
+}
+
+.chat-enter-from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+}
+
+.chat-enter-active {
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.chat-leave-to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+}
+
+.chat-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    position: absolute;
+    width: 100%;
+}
+
+.chat-move {
+    transition: transform 0.2s ease;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+}
