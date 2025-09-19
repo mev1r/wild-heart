@@ -1,8 +1,9 @@
 import {defineStore} from "pinia";
-import {EVENT_END_EXPEDITION, EVENT_EXPEDITION_COUNTDOWN, EVENT_START_EXPEDITION} from "../pkg/events";
+import {EVENT_END_EXPEDITION, EVENT_EXPEDITION_COUNTDOWN, EVENT_MOB, EVENT_START_EXPEDITION} from "../pkg/events";
 import {ref, watch} from "vue";
 import {useEchoStore} from "./echo";
 import {useSlotsStore} from "./slots";
+import {MobTier} from "../types.ts";
 
 export const useExpeditionsStore = defineStore("expeditions", () => {
     const echo = useEchoStore();
@@ -10,6 +11,7 @@ export const useExpeditionsStore = defineStore("expeditions", () => {
 
     const duration = ref<number>(0);
     const endTime = ref<number>(0);
+    const mobs = ref<Mob[]>([]);
 
     function start() {
         const huntDuration = slots.compass?.item?.stats?.expedition_duration;
@@ -26,6 +28,7 @@ export const useExpeditionsStore = defineStore("expeditions", () => {
     function leave() {
         duration.value = 0
         endTime.value = 0;
+        mobs.value = [];
         echo.sendMessage(EVENT_END_EXPEDITION);
     }
 
@@ -49,11 +52,35 @@ export const useExpeditionsStore = defineStore("expeditions", () => {
         }
     );
 
+    watch(
+        () => echo.data,
+        async (value: string) => {
+            const message = echo.parsePayload<Mob>(value);
+
+            if (message.event === EVENT_MOB) {
+                mobs.value.push(message.data);
+            }
+        }
+    );
+
     return {
         duration,
         endTime,
+
+        mobs,
 
         start,
         leave
     };
 });
+
+export type Mob = {
+    damage: number
+    expedition_id: string
+    id: string
+    hp: number
+    max_hp: number
+    level: number
+    name: string
+    tier: MobTier
+}

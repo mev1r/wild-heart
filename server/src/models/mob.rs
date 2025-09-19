@@ -11,18 +11,22 @@ pub struct Mob {
     pub expedition_id: Uuid,
     pub name: String,
     pub tier: MobTier,
+    pub hp: u64,
+    pub max_hp: u64,
     pub level: u64,
     pub damage: u64,
 }
 
 impl Mob {
-    pub fn new(name: &str, expedition_id: Uuid, tier: MobTier, level: u64) -> Self {
+    pub fn new(name: &str, expedition_id: Uuid, hp: u64, tier: MobTier, level: u64) -> Self {
         Self {
             id: Uuid::new_v4(),
             expedition_id,
             name: name.to_string(),
             tier,
             level,
+            hp,
+            max_hp: hp,
             damage: BASE_MOB_ATTACK,
         }
     }

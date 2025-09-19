@@ -1107,6 +1107,8 @@ dependencies = [
  "futures-util",
  "jsonwebtoken",
  "once_cell",
+ "rand",
+ "rand_chacha",
  "serde",
  "serde_json",
  "sled",

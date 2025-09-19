@@ -2,6 +2,7 @@
 import Section from "./Section.vue";
 import Slot from "./Slot.vue";
 import Item from "./Item.vue";
+import Mob from "./Mob.vue";
 import {useSlotsStore} from "../stores/slots";
 import {useExpeditionsStore} from "../stores/expeditions";
 import {Icon} from "@iconify/vue";
@@ -31,7 +32,8 @@ const expeditionsStore = useExpeditionsStore();
         </Section>
       </template>
       <template v-else>
-        <div class="flex-1">
+        <div class="flex-1 grid grid-cols-3 gap-2">
+          <Mob v-for="mob in expeditionsStore.mobs" :key="mob.id" :mob="mob"/>
         </div>
         <Section class="p-2">
           <div class="relative z-10 grid grid-cols-4 gap-2 content-start">

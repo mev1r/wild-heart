@@ -28,6 +28,7 @@ pub use chat_message::ChatKind;
 pub use expedition::ExpeditionKind;
 pub use item::ItemKind;
 pub use item::ItemTier;
+pub use mob::MobTier;
 pub use slot::SlotKind;
 
 use serde::{Deserialize, Serialize};

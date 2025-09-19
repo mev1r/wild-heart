@@ -49,3 +49,5 @@ export type SlotKind =
 
 export type ItemKind = "Weapon" | "Consumable";
 export type ItemSubKind = "hunter_compass" | "one_handed_sword";
+
+export type MobTier = "Common" | "Magic" | "Rare" | "Epic";

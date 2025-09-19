@@ -1,8 +1,8 @@
-<script setup lang="ts">
-import { Icon } from "@iconify/vue";
-import { Tier } from "../types";
-import { nextTick, ref, useSlots } from "vue";
-import { useElementBounding } from "@vueuse/core";
+<script lang="ts" setup>
+import {Icon} from "@iconify/vue";
+import {Tier} from "../types";
+import {nextTick, ref, useSlots} from "vue";
+import {useElementBounding} from "@vueuse/core";
 import Section from "./Section.vue";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
   iconTier?: Tier;
 };
 
-const { tier = "common", iconTier = "common" } = defineProps<Props>();
+const {tier = "Common", iconTier = "Common"} = defineProps<Props>();
 const slots = useSlots();
 
 const CONTAINER = document.getElementById("app");
@@ -43,7 +43,7 @@ async function onHover() {
     bottom: tooltipWrapperBottom,
     width: tooltipWrapperWidth,
   } = useElementBounding(tooltipWrapperRef);
-  const { width: tooltipWidth, height: tooltipHeight } =
+  const {width: tooltipWidth, height: tooltipHeight} =
       useElementBounding(tooltipRef);
 
   positionX.value =
@@ -80,22 +80,22 @@ function onLeave() {
   <div
       ref="tooltipWrapperRef"
       class="relative w-full h-full z-10"
+      @mousedown="onLeave"
       @mouseenter="onHover"
       @mouseleave="onLeave"
-      @mousedown="onLeave"
   >
-    <slot name="trigger" />
+    <slot name="trigger"/>
     <Teleport to="#tooltips">
       <Section
           v-if="isVisible"
           ref="tooltipRef"
-          :tier="tier"
-          class="fixed flex flex-col gap-3 z-50 p-2 w-content max-w-[340px]"
           :style="{
           left: `${positionX}px`,
           top: `${positionY}px`,
           opacity,
         }"
+          :tier="tier"
+          class="fixed flex flex-col gap-3 z-50 p-2 w-content max-w-[340px]"
       >
         <div v-if="icon || title" class="flex gap-4 items-start">
           <Section
@@ -103,7 +103,7 @@ function onLeave() {
               :tier="iconTier"
               class="w-[32px] h-[32px] flex items-center justify-center text-zinc-500"
           >
-            <Icon :icon="icon" :width="22" />
+            <Icon :icon="icon" :width="22"/>
           </Section>
           <div class="flex flex-col gap-1">
             <div
@@ -114,7 +114,7 @@ function onLeave() {
           </div>
         </div>
         <div v-if="slots.default" class="flex flex-col gap-2">
-          <slot />
+          <slot/>
         </div>
       </Section>
     </Teleport>

@@ -1,7 +1,10 @@
 use crate::messages::{OutgoingEvent, OutgoingMessage};
+use crate::models::{Mob, MobTier};
 use crate::server::GameServer;
 use crate::server::WebSocketManager;
 use chrono::Utc;
+use rand::Rng;
+use rand_chacha::rand_core::SeedableRng;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use tokio::time::interval;
@@ -22,11 +25,12 @@ impl GameLoop {
         }
 
         self.running = true;
-        println!("Game loop started");
 
         let mut player_regen_timers: HashMap<Uuid, Instant> = HashMap::new();
         let mut tick_interval = interval(Duration::from_millis(50));
         let mut expedition_countdown_timers: HashMap<Uuid, Instant> = HashMap::new();
+        let mut expedition_mob_spawn: HashMap<Uuid, bool> = HashMap::new();
+        // let mut player_attack_timers: HashMap<Uuid, Instant> = HashMap::new();
 
         while self.running {
             tick_interval.tick().await;
@@ -34,6 +38,8 @@ impl GameLoop {
 
             self.handle_hp_regeneration(&mut player_regen_timers, now).await;
             self.handle_expeditions(&mut expedition_countdown_timers, now).await;
+            self.handle_mobs(&mut expedition_mob_spawn).await;
+            // self.handle_player_auto_attack(&mut player_attack_timers, now).await;
         }
     }
 
@@ -70,11 +76,10 @@ impl GameLoop {
                     if let Ok(updated_resource) = server.player_resource_store.update(&player_resource.id, |resource| {
                         resource.hp = new_hp;
                     }) {
-                        let msg = OutgoingMessage::new(
+                        ws_manager.send_to_player(player_resource.player_id, OutgoingMessage::new(
                             OutgoingEvent::PlayerResource,
                             Box::new(updated_resource) as Box<dyn erased_serde::Serialize + Send>,
-                        );
-                        ws_manager.send_to_player(player_resource.player_id, msg).await;
+                        )).await;
                     }
 
                     player_regen_timers.insert(player_resource.player_id, now);
@@ -130,15 +135,85 @@ impl GameLoop {
                             .find_by(|stats| stats.player_id == expedition.participant_id);
 
                         if let Some(player_state) = player_state {
-                            let msg = OutgoingMessage::new(
+                            ws_manager.send_to_player(expedition.participant_id, OutgoingMessage::new(
                                 OutgoingEvent::PlayerState,
                                 Box::new(player_state) as Box<dyn erased_serde::Serialize + Send>,
-                            );
-                            ws_manager.send_to_player(expedition.participant_id, msg).await;
+                            )).await;
                         }
                     }
                 }
             }
         }
+    }
+
+    async fn handle_mobs(&self, expedition_mob_spawn: &mut HashMap<Uuid, bool>) {
+        let server = GameServer::global();
+        let ws_manager = WebSocketManager::global();
+
+        let chrono_now = Utc::now();
+        let active_expeditions: Vec<_> = server.expeditions_store
+            .data
+            .iter()
+            .map(|entry| entry.value().clone())
+            .filter(|e| e.ended_at > chrono_now)
+            .collect();
+
+        for expedition in active_expeditions.clone() {
+            if expedition_mob_spawn.get(&expedition.id).copied().unwrap_or(false) {
+                continue;
+            }
+
+            let existing_mobs = server.mobs_store
+                .find_all_by(|mob| mob.expedition_id == expedition.id);
+
+            if !existing_mobs.is_empty() {
+                expedition_mob_spawn.insert(expedition.id, true);
+                continue;
+            }
+
+            let mob_names = vec![
+                "Goblin Scout",
+                "Wolf",
+                "Skeleton Warrior",
+                "Giant Spider",
+                "Orc Grunt",
+                "Dark Elf",
+                "Zombie",
+                "Bandit",
+                "Wild Boar",
+            ];
+
+            let mut rng = rand_chacha::ChaCha12Rng::from_entropy();
+
+            for name in mob_names.iter() {
+                let tier = if rng.gen_range(0..100) < 60 {
+                    MobTier::Common
+                } else if rng.gen_range(0..100) < 85 {
+                    MobTier::Magic
+                } else if rng.gen_range(0..100) < 95 {
+                    MobTier::Rare
+                } else {
+                    MobTier::Epic
+                };
+
+                let level = rng.gen_range(1..=5);
+
+                let mob = Mob::new(name, expedition.id, 100, tier, level);
+                if let Err(e) = server.mobs_store.insert(mob.clone()) {
+                    eprintln!("Failed to spawn mob: {}", e);
+                    continue;
+                }
+
+                ws_manager.send_to_player(expedition.participant_id, OutgoingMessage::new(
+                    OutgoingEvent::Mob,
+                    Box::new(mob) as Box<dyn erased_serde::Serialize + Send>,
+                )).await;
+            }
+
+            expedition_mob_spawn.insert(expedition.id, true);
+        }
+
+        let active_expedition_ids: Vec<Uuid> = active_expeditions.iter().map(|e| e.id).collect();
+        expedition_mob_spawn.retain(|id, _| active_expedition_ids.contains(id));
     }
 }
