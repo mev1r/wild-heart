@@ -47,7 +47,7 @@ export type SlotKind =
     | typeof GROUND_SLOT
     | typeof ARMOR_SLOT;
 
-export type ItemKind = "Weapon" | "Consumable";
+export type ItemKind = "Weapon" | "Consumable" | "Currency";
 export type ItemSubKind = "hunter_compass" | "one_handed_sword";
 
 export type MobTier = "Common" | "Magic" | "Rare" | "Epic";

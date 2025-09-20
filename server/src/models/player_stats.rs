@@ -11,6 +11,7 @@ pub struct PlayerStats {
     pub player_id: Uuid,
     pub attack: u64,
     pub attack_speed: u64,
+    pub defense: u64,
     pub energy_regeneration: u64,
     pub energy_regeneration_interval: u64,
 }
@@ -27,6 +28,7 @@ impl PlayerStats {
             player_id,
             attack: Self::calculate_attack(&attributes),
             attack_speed: Self::calculate_attack_speed(&attributes),
+            defense: Self::calculate_defense(&attributes),
             energy_regeneration: Self::calculate_energy_regeneration(&attributes),
             energy_regeneration_interval: Self::calculate_energy_regeneration_interval(&attributes),
         }
@@ -60,6 +62,22 @@ impl PlayerStats {
         let equipment_speed_modifier = Self::get_equipment_stat(attributes.player_id, |stats| stats.attack_speed.unwrap_or(0) as u64);
 
         base_speed - equipment_speed_modifier
+    }
+
+    fn calculate_defense(attributes: &PlayerAttributes) -> u64 {
+        let base_defense = 10;
+        let strength_bonus = attributes.strength as u64 * 3;
+        let vit_bonus = attributes.vitality as u64 * 1;
+
+        let flat_attack = base_defense + strength_bonus + vit_bonus;
+
+        let strength_percent_bonus = (flat_attack * attributes.strength as u64) / 100;
+
+        let base_total = flat_attack + strength_percent_bonus;
+
+        let equipment_attack = Self::get_equipment_stat(attributes.player_id, |stats| stats.defense.unwrap_or(0));
+
+        base_total + equipment_attack
     }
 
     fn calculate_energy_regeneration(attributes: &PlayerAttributes) -> u64 {
@@ -97,6 +115,7 @@ impl PlayerStats {
         let updated = server.player_stats_store.update(&self.id, |stats| {
             stats.attack = Self::calculate_attack(&attributes);
             stats.attack_speed = Self::calculate_attack_speed(&attributes);
+            stats.defense = Self::calculate_defense(&attributes);
             stats.energy_regeneration = Self::calculate_energy_regeneration(&attributes);
             stats.energy_regeneration_interval = Self::calculate_energy_regeneration_interval(&attributes);
         });

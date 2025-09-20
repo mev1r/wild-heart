@@ -66,6 +66,26 @@ impl Item {
 
         slots.sort_by_key(|slot| slot.index);
 
+        if self.is_stackable {
+            for slot in &slots {
+                if let Some(existing_item) = &slot.item {
+                    if existing_item.is_stackable
+                        && existing_item.kind == self.kind
+                        && existing_item.name == self.name
+                        && existing_item.level == self.level
+                        && existing_item.enchanted == self.enchanted {
+                        server.slots_store.update(&slot.id, |slot| {
+                            if let Some(ref mut item) = slot.item {
+                                item.quantity += self.quantity;
+                            }
+                        })?;
+
+                        return Ok(());
+                    }
+                }
+            }
+        }
+
         let empty_slot = slots
             .into_iter()
             .find(|slot| slot.item.is_none())
@@ -88,6 +108,7 @@ impl super::Model for Item {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ItemKind {
     Rune,
+    Currency,
     Consumable,
     Compass,
     Hand,

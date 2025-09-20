@@ -17,7 +17,7 @@ const {item, iconSize = 28} = defineProps<Props>();
 const metaStore = useMetaStore();
 
 const title = computed(() => {
-  return `${item.enchanted > 0 ? `+${item.enchanted} ` : ""}${item.name}${
+  return `${item.enchanted > 0 ? `+${item.enchanted} ` : ""}${item.name}${item.kind === 'Currency' ? ` <span class='text-zinc-500'>(${formatNumber(item.quantity)})</span>` : ''}${
       item.level > 0 ? ` <span class='text-primary'>Lv.${item.level}<span>` : ""
   }`;
 });
@@ -54,20 +54,20 @@ function getStats(stats: ItemStats): Partial<ItemStats> {
       >
         <Icon :icon="item.icon" :width="iconSize" class="text-zinc-500"/>
         <span
-            v-if="item.quantity > 1"
-            class="absolute text-[9px] left-[2px] bottom-[2px] leading-none"
+            v-if="item.quantity > 1 && item.kind !== 'Currency'"
+            class="absolute text-[9px] left-[2px] bottom-[2px] leading-none font-timer"
         >
           {{ item.quantity > 99 ? "99+" : item.quantity }}
         </span>
         <span
             v-if="item.enchanted > 0"
-            class="absolute text-[9px] left-[2px] bottom-[2px] leading-none text-silver font-bold"
+            class="absolute text-[9px] left-[2px] bottom-[2px] leading-none text-silver font-bold font-timer"
         >
           {{ `+${item.enchanted}` }}
         </span>
         <span
             v-if="item.level > 0"
-            class="absolute text-[9px] right-[2px] bottom-[2px] leading-none text-silver"
+            class="absolute text-[9px] right-[2px] bottom-[2px] leading-none text-silver font-timer"
         >
           Lv{{ `${item.level}` }}
         </span>

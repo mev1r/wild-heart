@@ -61,7 +61,7 @@ impl MessageHandler {
 
         if data.kind == SlotKind::Compass {
             let has_active_expedition = server.expeditions_store
-                .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at > Option::from(Utc::now()))
+                .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at.is_none())
                 .is_some();
 
             if has_active_expedition {
@@ -265,7 +265,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         let already_active = server.expeditions_store
-            .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at > Option::from(Utc::now()))
+            .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at.is_none())
             .is_some();
 
         if already_active {
@@ -322,12 +322,31 @@ impl MessageHandler {
             state.is_looting = false;
         })?;
 
+        let ground_slots = server.slots_store.find_all_by(|slot| {
+            slot.player_id == self.player_id && slot.kind == SlotKind::Ground
+        });
+
+        for slot in ground_slots {
+            server.slots_store.update(&slot.id, |s| {
+                s.item = None;
+            })?;
+        }
+
         ws_manager.send_log_to_player(self.player_id, "You left the expedition.".to_string()).await;
 
-        Ok(vec![OutgoingMessage::new(
-            OutgoingEvent::PlayerState,
-            Box::new(updated_state) as Box<dyn erased_serde::Serialize + Send>,
-        )])
+        let mut all_slots = server.slots_store.find_all_by(|slot| slot.player_id == self.player_id);
+        all_slots.sort_by_key(|slot| slot.index);
+
+        Ok(vec![
+            OutgoingMessage::new(
+                OutgoingEvent::PlayerState,
+                Box::new(updated_state) as Box<dyn erased_serde::Serialize + Send>,
+            ),
+            OutgoingMessage::new(
+                OutgoingEvent::Slots,
+                Box::new(all_slots) as Box<dyn erased_serde::Serialize + Send>,
+            )
+        ])
     }
 
     async fn handle_toggle_loot(&self) -> Result<Vec<OutgoingMessage<Box<dyn erased_serde::Serialize + Send>>>, String> {

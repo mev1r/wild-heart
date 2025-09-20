@@ -39,6 +39,10 @@ const attackSpeed = computed(() => {
             <div>{{ formatNumber(attackSpeed) }}/s</div>
           </div>
           <div class="flex items-center justify-between">
+            <div>Defense:</div>
+            <div>{{ formatNumber(playerStatsStore.defense) }}</div>
+          </div>
+          <div class="flex items-center justify-between">
             <div>Energy Regeneration:</div>
             <div>{{ formatNumber(playerStatsStore.energyPerSecond) }}/s</div>
           </div>

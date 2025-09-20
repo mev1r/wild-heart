@@ -68,6 +68,15 @@ export const useSlotsStore = defineStore("slots", () => {
         }, 0);
     });
 
+    const cin = computed(() => {
+        return inventory.value.reduce((memo, current) => {
+            if (current.item && current.item.kind === 'Currency') {
+                memo += current.item.quantity;
+            }
+            return memo;
+        }, 0);
+    })
+
     watch(
         () => echo.data,
         async (value: string) => {
@@ -131,7 +140,8 @@ export const useSlotsStore = defineStore("slots", () => {
         ground,
 
         filled,
-        weight
+        weight,
+        cin
     };
 });
 

@@ -14,15 +14,23 @@ import GameLoader from "../components/GameLoader.vue";
 import Expedition from "../components/Expedition.vue";
 import Controls from "../components/Controls.vue";
 import Logs from "../components/Logs.vue";
+import {useSlotsStore} from "../stores/slots.ts";
+import Section from "../components/Section.vue";
+import Item from "../components/Item.vue";
+import Slot from "../components/Slot.vue";
+import {Icon} from "@iconify/vue";
+import {useExpeditionsStore} from "../stores/expeditions.ts";
 
 const echo = useEchoStore();
-const auth = useAuthStore();
+const authStore = useAuthStore();
+const slotsStore = useSlotsStore()
+const expeditionsStore = useExpeditionsStore();
 
 onMounted(async () => {
-  echo.connect(auth.token);
+  echo.connect(authStore.token);
 
   const win = Window.getCurrent();
-  await win.setSize(new LogicalSize(1600, 900));
+  await win.setSize(new LogicalSize(1600, 870));
   await win.center();
 });
 </script>
@@ -35,8 +43,28 @@ onMounted(async () => {
       <Chat/>
     </div>
     <div class="flex flex-1 flex-col gap-2">
-      <Expedition/>
-      <Logs class="mt-auto"/>
+      <div class="flex gap-2 flex-1 w-full">
+        <div class="flex-1 flex flex-col gap-2">
+          <Expedition/>
+          <Logs class="mt-auto"/>
+        </div>
+        <div class="flex flex-col">
+          <Section v-if="expeditionsStore.time === -1" class="w-[202px] flex flex-1 items-center justify-center">
+            <Icon
+                :width="64"
+                class="text-zinc-700/20"
+                icon="game-icons:triple-lock"
+            />
+          </Section>
+          <Section v-else class="p-2 flex-1">
+            <div class="relative z-10 grid grid-cols-4 gap-2 content-start">
+              <Slot v-for="slot in slotsStore.ground" :key="slot.index" :slot="slot">
+                <Item v-if="slot.item" :item="slot.item"/>
+              </Slot>
+            </div>
+          </Section>
+        </div>
+      </div>
       <Controls/>
     </div>
     <div class="w-full max-w-[394px] flex flex-col gap-2">

@@ -54,6 +54,19 @@ const progress = computed(() => {
       </div>
       <div class="flex items-center gap-4 ml-auto">
         <div>
+          <Tooltip icon="game-icons:two-coins" title="Cin" type="currency">
+            <template #trigger>
+              <div class="flex items-center gap-2">
+                <Icon icon="game-icons:two-coins"/>
+                {{ formatNumber(slotsStore.cin) }}
+              </div>
+            </template>
+            <div class="text-sm text-zinc-500 leading-none">
+              The primary currency of the realm.
+            </div>
+          </Tooltip>
+        </div>
+        <div>
           <Tooltip icon="game-icons:weight" title="Weight" type="progression">
             <template #trigger>
               <div class="flex items-center gap-2">

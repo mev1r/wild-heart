@@ -71,7 +71,7 @@ onMounted(async () => {
 
   app = new Application();
   await app.init({
-    view: canvasRef.value,
+    canvas: canvasRef.value,
     width,
     height,
     backgroundAlpha: 0,
@@ -158,6 +158,6 @@ onBeforeUnmount(async () => {
 <template>
   <canvas
       ref="canvasRef"
-      class="block absolute w-full h-full pointer-events-none"
+      class="block absolute w-full h-full pointer-events-none left-0 top-0 z-50"
   />
 </template>

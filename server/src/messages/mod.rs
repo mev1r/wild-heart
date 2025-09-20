@@ -52,5 +52,7 @@ pub enum OutgoingEvent {
     Meta,
     ChatMessage,
     ExpeditionCountup,
+    GainedExperience,
+    GainedCin,
     Log,
 }

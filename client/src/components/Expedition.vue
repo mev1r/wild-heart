@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import Section from "./Section.vue";
-import Slot from "./Slot.vue";
-import Item from "./Item.vue";
-import {useSlotsStore} from "../stores/slots";
 import {useExpeditionsStore} from "../stores/expeditions";
 import {Icon} from "@iconify/vue";
 import Timer from "./Timer.vue";
+import {formatNumber} from "../pkg/utils.ts";
 
-const slotsStore = useSlotsStore();
 const expeditionsStore = useExpeditionsStore();
 </script>
 
@@ -22,30 +19,24 @@ const expeditionsStore = useExpeditionsStore();
               icon="game-icons:triple-lock"
           />
         </Section>
-        <Section class="w-[202px] flex items-center justify-center">
-          <Icon
-              :width="64"
-              class="text-zinc-700/20"
-              icon="game-icons:triple-lock"
-          />
-        </Section>
       </template>
-      <template v-else>
-        <Section class="flex-1 flex flex-col p-2">
-          <div
-              class="flex-1 flex items-center justify-center p-2 shadow-inner-custom bg-slot/60 border border-[#2a2a2acc] border-t-[#191919cc] border-b-[#3a3a3acc]"
-          >
-            <Timer/>
+      <Section v-else class="flex-1 flex flex-col p-2">
+        <div
+            class="relative flex-1 flex items-center justify-center p-2 shadow-inner-custom bg-slot/60 border border-[#2a2a2acc] border-t-[#191919cc] border-b-[#3a3a3acc]"
+        >
+          <Timer/>
+          <div class="absolute left-4 bottom-4 leading-none text-center">
+            <div class="text-sm leading-none text-zinc-500 mb-1">Gained Experience:</div>
+            <span class="font-timer">{{ formatNumber(expeditionsStore.gainedExperience) }}</span>
+            Exp
           </div>
-        </Section>
-        <Section class="p-2">
-          <div class="relative z-10 grid grid-cols-4 gap-2 content-start">
-            <Slot v-for="slot in slotsStore.ground" :key="slot.index" :slot="slot">
-              <Item v-if="slot.item" :item="slot.item"/>
-            </Slot>
+          <div class="absolute right-4 bottom-4 leading-none text-center">
+            <div class="text-sm leading-none text-zinc-500 mb-1">Gained Cin:</div>
+            <span class="font-timer">{{ formatNumber(expeditionsStore.gainedCin) }}</span>
+            Cin
           </div>
-        </Section>
-      </template>
+        </div>
+      </Section>
     </div>
   </div>
 </template>
