@@ -38,11 +38,11 @@ watch(logs, () => {
 </script>
 
 <template>
-  <Section class="relative flex flex-col overflow-hidden h-[196px]">
+  <Section class="relative flex flex-col overflow-hidden h-[214px]">
     <div class="relative z-10 flex-1 flex flex-col py-2 px-2">
       <div
           ref="logsContainer"
-          class="flex flex-col gap-1 overflow-auto scroller h-[178px] text-sm p-2 shadow-inner-custom bg-slot/60 border border-[#2a2a2acc] border-t-[#191919cc] border-b-[#3a3a3acc]"
+          class="flex flex-col gap-1 overflow-auto scroller h-[196px] text-sm p-2 shadow-inner-custom bg-slot/60 border border-[#2a2a2acc] border-t-[#191919cc] border-b-[#3a3a3acc]"
       >
         <TransitionGroup appear name="chat">
           <div

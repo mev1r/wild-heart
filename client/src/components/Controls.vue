@@ -8,17 +8,10 @@ import Item from "./Item.vue";
 import GlassCover from "./GlassCover.vue";
 import {usePlayerStateStore} from "../stores/player-state";
 import {useExpeditionsStore} from "../stores/expeditions.ts";
-import {usePlayerResourceStore} from "../stores/player-resource.ts";
-import {computed} from "vue";
 
 const slotsStore = useSlotsStore();
 const expeditionsStore = useExpeditionsStore();
 const playerStateStore = usePlayerStateStore();
-const playerResourceStore = usePlayerResourceStore();
-
-const canResurrect = computed(() => {
-  return playerResourceStore.hp <= 0
-})
 </script>
 
 <template>
@@ -59,7 +52,7 @@ const canResurrect = computed(() => {
               <Tooltip
                   :class="{
                   'pointer-events-none opacity-50':
-                    !slotsStore.compass?.item || expeditionsStore.duration > 0,
+                    !slotsStore.compass?.item || expeditionsStore.time > -1,
                 }"
                   icon="game-icons:twirl-center"
                   title="Enter Expedition"
@@ -82,7 +75,7 @@ const canResurrect = computed(() => {
               <Tooltip
                   :class="{
                   'pointer-events-none opacity-50':
-                    !slotsStore.compass?.item || expeditionsStore.duration === 0,
+                    !slotsStore.compass?.item || expeditionsStore.time === -1,
                 }"
                   icon="game-icons:run"
                   title="Leave Expedition"
@@ -107,7 +100,7 @@ const canResurrect = computed(() => {
           <div>
             <Tooltip
                 :class="{
-                  'pointer-events-none opacity-50': expeditionsStore.duration === 0,
+                  'pointer-events-none opacity-50': expeditionsStore.time === -1,
                 }"
                 icon="game-icons:card-pickup"
                 title="Auto Loot Items"

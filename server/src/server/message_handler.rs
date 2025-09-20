@@ -61,7 +61,7 @@ impl MessageHandler {
 
         if data.kind == SlotKind::Compass {
             let has_active_expedition = server.expeditions_store
-                .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
+                .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at > Option::from(Utc::now()))
                 .is_some();
 
             if has_active_expedition {
@@ -265,7 +265,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         let already_active = server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
+            .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at > Option::from(Utc::now()))
             .is_some();
 
         if already_active {
@@ -287,7 +287,12 @@ impl MessageHandler {
         let stats = item.stats.as_ref().ok_or("Compass has no stats")?;
         let kind = stats.expedition_kind.clone().unwrap_or(ExpeditionKind::Hunt);
 
-        let expedition = Expedition::new(self.player_id, kind);
+        let player_resource = server.player_resource_store.find_by(|r| r.player_id == self.player_id).ok_or("Player resource not found")?;
+        if player_resource.energy <= 0 {
+            return Err("No energy to start expedition".to_string());
+        }
+
+        let expedition = Expedition::new(vec![self.player_id], kind);
 
         server.expeditions_store.insert(expedition.clone())
             .map_err(|e| format!("Failed to store expedition: {}", e))?;
@@ -302,7 +307,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         let active = server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
+            .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at.is_none())
             .ok_or("No active expedition to end")?;
 
         let _ = server.expeditions_store.update(&active.id, |exp| {
@@ -330,7 +335,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
+            .find_by(|e| e.participants.contains(&self.player_id) && e.ended_at.is_none())
             .ok_or("No active expedition to loot in")?;
 
         let player_state = server.player_state_store

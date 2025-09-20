@@ -5,17 +5,17 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Expedition {
     pub id: Uuid,
-    pub participant_id: Uuid,
+    pub participants: Vec<Uuid>,
     pub kind: ExpeditionKind,
     pub started_at: DateTime<Utc>,
     pub ended_at: Option<DateTime<Utc>>,
 }
 
 impl Expedition {
-    pub fn new(participant_id: Uuid, kind: ExpeditionKind) -> Self {
+    pub fn new(participants: Vec<Uuid>, kind: ExpeditionKind) -> Self {
         Self {
             id: Uuid::new_v4(),
-            participant_id,
+            participants,
             kind,
             started_at: Utc::now(),
             ended_at: None,

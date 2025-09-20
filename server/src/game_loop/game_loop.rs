@@ -1,6 +1,7 @@
 use crate::messages::{OutgoingEvent, OutgoingMessage};
 use crate::server::GameServer;
 use crate::server::WebSocketManager;
+use chrono::Utc;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use tokio::time::interval;
@@ -23,13 +24,43 @@ impl GameLoop {
         self.running = true;
 
         let mut player_regen_timers: HashMap<Uuid, Instant> = HashMap::new();
+        let mut expedition_timers: HashMap<Uuid, Instant> = HashMap::new();
         let mut tick_interval = interval(Duration::from_millis(50));
 
         while self.running {
             tick_interval.tick().await;
             let now = Instant::now();
 
+            self.handle_expedition(&mut expedition_timers, now).await;
             self.handle_energy_regeneration(&mut player_regen_timers, now).await;
+        }
+    }
+
+    async fn handle_expedition(&self, expedition_timers: &mut HashMap<Uuid, Instant>, now: Instant) {
+        let server = GameServer::global();
+        let ws_manager = WebSocketManager::global();
+
+        let active_expeditions = server.expeditions_store.find_all_by(|e| e.ended_at.is_none());
+        let now = Instant::now();
+
+        for expedition in active_expeditions {
+            let last_tick = expedition_timers
+                .get(&expedition.id)
+                .copied()
+                .unwrap_or_else(|| now - Duration::from_secs(1));
+
+            if now.duration_since(last_tick) >= Duration::from_secs(1) {
+                let elapsed_secs = (Utc::now() - expedition.started_at).num_seconds() as u64;
+
+                for player_id in &expedition.participants {
+                    ws_manager.send_to_player(*player_id, OutgoingMessage::new(
+                        OutgoingEvent::ExpeditionCountup,
+                        Box::new(elapsed_secs) as Box<dyn erased_serde::Serialize + Send>,
+                    )).await;
+                }
+
+                expedition_timers.insert(expedition.id, now);
+            }
         }
     }
 

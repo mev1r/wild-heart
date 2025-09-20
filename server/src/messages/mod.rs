@@ -51,6 +51,6 @@ pub enum OutgoingEvent {
     Slots,
     Meta,
     ChatMessage,
-    ExpeditionCountdown,
+    ExpeditionCountup,
     Log,
 }

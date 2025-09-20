@@ -6,7 +6,7 @@ import {useEchoStore} from "./echo";
 export const useExpeditionsStore = defineStore("expeditions", () => {
     const echo = useEchoStore();
 
-    const time = ref<number>(0);
+    const time = ref<number>(-1);
 
     function start() {
         echo.sendMessage(EVENT_START_EXPEDITION);
@@ -14,6 +14,7 @@ export const useExpeditionsStore = defineStore("expeditions", () => {
 
     function leave() {
         echo.sendMessage(EVENT_END_EXPEDITION);
+        time.value = -1;
     }
 
     watch(

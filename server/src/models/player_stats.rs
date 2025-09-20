@@ -64,8 +64,8 @@ impl PlayerStats {
 
     fn calculate_energy_regeneration(attributes: &PlayerAttributes) -> u64 {
         let base_hp_regen = BASE_HP_REGENERATION;
-        let vitality_bonus = attributes.vitality as u64 / 5;
-        let spirit_bonus = attributes.spirit as u64 / 10;
+        let vitality_bonus = attributes.vitality as u64 / 10;
+        let spirit_bonus = attributes.spirit as u64 / 15;
 
         let base_total = base_hp_regen + vitality_bonus + spirit_bonus;
 
