@@ -37,20 +37,6 @@ function getStats(stats: ItemStats): Partial<ItemStats> {
       Object.entries(stats).filter(([_, value]) => value != null)
   ) as Partial<ItemStats>;
 }
-
-function getDuration(duration: number) {
-  const msInSecond = 1000;
-  const msInMinute = 60 * msInSecond;
-  const msInHour = 60 * msInMinute;
-
-  if (duration <= 60 * msInSecond) {
-    return `${Math.round(duration / msInSecond)}s`;
-  }
-  if (duration <= 60 * msInMinute) {
-    return `${Math.round(duration / msInMinute)}m`;
-  }
-  return `${Math.round(duration / msInHour)}h`;
-}
 </script>
 
 <template>
@@ -98,10 +84,6 @@ function getDuration(duration: number) {
         <template v-if="name === 'attack_speed' && typeof value === 'number'">
           {{ toReadableText(name) }}:
           <span class="text-silver">{{ getAttackSpeed(value) }}</span>
-        </template>
-        <template v-else-if="name.includes('duration') && typeof value === 'number'">
-          {{ toReadableText(name) }}:
-          <span class="text-silver">{{ getDuration(value) }}</span>
         </template>
         <template v-else>
           {{ toReadableText(name) }}:

@@ -37,14 +37,12 @@ pub enum IncomingEvent {
     SendChatMessage,
     StartExpedition,
     EndExpedition,
-    ToggleAttack,
     ToggleLoot,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum OutgoingEvent {
-    Error,
     PlayerInfo,
     PlayerResource,
     PlayerAttributes,
@@ -55,5 +53,4 @@ pub enum OutgoingEvent {
     ChatMessage,
     ExpeditionCountdown,
     Log,
-    Mob,
 }

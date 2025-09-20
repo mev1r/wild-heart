@@ -16,15 +16,6 @@ pub struct Store<T: Model> {
 }
 
 impl<T: Model> Store<T> {
-    pub fn new() -> Self {
-        let (tx, _) = broadcast::channel(100);
-        Self {
-            data: DashMap::new(),
-            events: tx,
-            persistence: None,
-        }
-    }
-
     pub fn with_persistence(db: sled::Db, collection_name: &str) -> Result<Self, String> {
         let (tx, _) = broadcast::channel(100);
         let persistence = PersistenceLayer::new(db, collection_name.to_string());
@@ -51,10 +42,6 @@ impl<T: Model> Store<T> {
             }
         }
         Ok(())
-    }
-
-    pub fn subscribe(&self) -> broadcast::Receiver<Change<T>> {
-        self.events.subscribe()
     }
 
     pub fn insert(&self, item: T) -> Result<T, String> {
@@ -88,11 +75,7 @@ impl<T: Model> Store<T> {
 
         Ok(updated)
     }
-
-    pub fn get(&self, id: &Uuid) -> Option<T> {
-        self.data.get(id).map(|entry| entry.clone())
-    }
-
+    
     pub fn find_by<F>(&self, predicate: F) -> Option<T>
     where
         F: Fn(&T) -> bool,

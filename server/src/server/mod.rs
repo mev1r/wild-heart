@@ -3,7 +3,7 @@ mod auth_routes;
 mod message_handler;
 mod websocket_manager;
 
-use crate::models::{ChatMessage, Expedition, Item, Mob, Player, PlayerAttributes, PlayerResource, PlayerState, PlayerStats, Slot};
+use crate::models::{ChatMessage, Expedition, Item, Player, PlayerAttributes, PlayerResource, PlayerState, PlayerStats, Slot};
 use crate::store::Store;
 use axum::http::{header, Method};
 use axum::response::IntoResponse;
@@ -24,7 +24,6 @@ pub struct GameServer {
     pub slots_store: Arc<Store<Slot>>,
     pub chat_store: Arc<Store<ChatMessage>>,
     pub expeditions_store: Arc<Store<Expedition>>,
-    pub mobs_store: Arc<Store<Mob>>,
 }
 
 static GAME_SERVER: OnceCell<Arc<GameServer>> = OnceCell::new();
@@ -40,7 +39,6 @@ impl GameServer {
         slots_store: Store<Slot>,
         chat_store: Store<ChatMessage>,
         expeditions_store: Store<Expedition>,
-        mobs_store: Store<Mob>,
     ) -> Self {
         WebSocketManager::initialize();
 
@@ -54,7 +52,6 @@ impl GameServer {
             slots_store: Arc::new(slots_store),
             chat_store: Arc::new(chat_store),
             expeditions_store: Arc::new(expeditions_store),
-            mobs_store: Arc::new(mobs_store),
         }
     }
 

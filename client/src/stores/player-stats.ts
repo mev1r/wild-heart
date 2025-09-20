@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {EVENT_PLAYER_STATS} from "../pkg/events";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {useEchoStore} from "./echo";
 
 export const usePlayerStatsStore = defineStore("player-stats", () => {
@@ -8,8 +8,16 @@ export const usePlayerStatsStore = defineStore("player-stats", () => {
 
     const attack = ref<number>(0);
     const attackSpeed = ref<number>(0);
-    const hpRegeneration = ref<number>(0);
-    const hpRegenerationInterval = ref<number>(0);
+    const energyRegeneration = ref<number>(0);
+    const energyRegenerationInterval = ref<number>(0);
+
+    const energyPerSecond = computed(() => {
+        if (!energyRegenerationInterval.value || energyRegenerationInterval.value === 0) {
+            return 0;
+        }
+
+        return ((energyRegeneration.value / energyRegenerationInterval.value) * 1000).toFixed(2);
+    })
 
     watch(
         () => echo.data,
@@ -19,8 +27,8 @@ export const usePlayerStatsStore = defineStore("player-stats", () => {
             if (message.event === EVENT_PLAYER_STATS) {
                 attack.value = message.data.attack;
                 attackSpeed.value = message.data.attack_speed;
-                hpRegeneration.value = message.data.hp_regeneration;
-                hpRegenerationInterval.value = message.data.hp_regeneration_interval;
+                energyRegeneration.value = message.data.energy_regeneration;
+                energyRegenerationInterval.value = message.data.energy_regeneration_interval;
             }
         }
     );
@@ -28,14 +36,15 @@ export const usePlayerStatsStore = defineStore("player-stats", () => {
     return {
         attack,
         attackSpeed,
-        hpRegeneration,
-        hpRegenerationInterval
+        energyRegeneration,
+        energyRegenerationInterval,
+        energyPerSecond
     };
 });
 
 export type PlayerStats = {
     attack: number;
     attack_speed: number;
-    hp_regeneration: number;
-    hp_regeneration_interval: number;
+    energy_regeneration: number;
+    energy_regeneration_interval: number;
 };

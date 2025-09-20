@@ -1,10 +1,8 @@
 mod level_to_exp;
 mod base_stats;
-mod mob;
 
 pub use base_stats::*;
 pub use level_to_exp::level_to_exp;
-pub use mob::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

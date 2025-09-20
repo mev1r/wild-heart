@@ -157,8 +157,7 @@ export type Item = {
 export type ItemStats = {
     attack?: number,
     attack_speed?: number,
-    hp_regeneration?: number,
-    hp_regeneration_interval?: number,
-    expedition_duration?: number,
+    energy_regeneration?: number,
+    energy_regeneration_interval?: number,
     expedition_kind?: string
 }

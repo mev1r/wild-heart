@@ -9,14 +9,12 @@ mod chat_message;
 mod item_stats;
 mod expedition;
 mod log;
-mod mob;
 
 pub use chat_message::ChatMessage;
 pub use expedition::Expedition;
 pub use item::Item;
 pub use item_stats::ItemStats;
 pub use log::Log;
-pub use mob::Mob;
 pub use player::Player;
 pub use player_attributes::PlayerAttributes;
 pub use player_resource::PlayerResource;
@@ -28,7 +26,6 @@ pub use chat_message::ChatKind;
 pub use expedition::ExpeditionKind;
 pub use item::ItemKind;
 pub use item::ItemTier;
-pub use mob::MobTier;
 pub use slot::SlotKind;
 
 use serde::{Deserialize, Serialize};

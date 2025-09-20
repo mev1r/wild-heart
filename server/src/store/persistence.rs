@@ -27,19 +27,6 @@ impl PersistenceLayer {
         Ok(())
     }
 
-    pub fn load<T: DeserializeOwned>(&self, id: Uuid) -> Result<Option<T>, String> {
-        let key = format!("{}:{}", self.prefix, id);
-
-        match self.db.get(key).map_err(|e| e.to_string())? {
-            Some(bytes) => {
-                let item = bincode::deserialize(&bytes)
-                    .map_err(|e| e.to_string())?;
-                Ok(Some(item))
-            }
-            None => Ok(None)
-        }
-    }
-
     pub fn load_all<T: DeserializeOwned>(&self) -> Result<Vec<(Uuid, T)>, String> {
         let prefix = format!("{}:", self.prefix);
         let mut items = Vec::new();

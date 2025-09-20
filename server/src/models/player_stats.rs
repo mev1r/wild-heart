@@ -11,8 +11,8 @@ pub struct PlayerStats {
     pub player_id: Uuid,
     pub attack: u64,
     pub attack_speed: u64,
-    pub hp_regeneration: u64,
-    pub hp_regeneration_interval: u64,
+    pub energy_regeneration: u64,
+    pub energy_regeneration_interval: u64,
 }
 
 impl PlayerStats {
@@ -27,8 +27,8 @@ impl PlayerStats {
             player_id,
             attack: Self::calculate_attack(&attributes),
             attack_speed: Self::calculate_attack_speed(&attributes),
-            hp_regeneration: Self::calculate_hp_regeneration(&attributes),
-            hp_regeneration_interval: Self::calculate_hp_regen_interval(&attributes),
+            energy_regeneration: Self::calculate_energy_regeneration(&attributes),
+            energy_regeneration_interval: Self::calculate_energy_regeneration_interval(&attributes),
         }
     }
 
@@ -62,19 +62,19 @@ impl PlayerStats {
         base_speed - equipment_speed_modifier
     }
 
-    fn calculate_hp_regeneration(attributes: &PlayerAttributes) -> u64 {
+    fn calculate_energy_regeneration(attributes: &PlayerAttributes) -> u64 {
         let base_hp_regen = BASE_HP_REGENERATION;
         let vitality_bonus = attributes.vitality as u64 / 5;
         let spirit_bonus = attributes.spirit as u64 / 10;
 
         let base_total = base_hp_regen + vitality_bonus + spirit_bonus;
 
-        let equipment_regen = Self::get_equipment_stat(attributes.player_id, |stats| stats.hp_regeneration.unwrap_or(0));
+        let equipment_regen = Self::get_equipment_stat(attributes.player_id, |stats| stats.energy_regeneration.unwrap_or(0));
 
         base_total + equipment_regen
     }
 
-    fn calculate_hp_regen_interval(attributes: &PlayerAttributes) -> u64 {
+    fn calculate_energy_regeneration_interval(attributes: &PlayerAttributes) -> u64 {
         let base_interval = BASE_HP_REGENERATION_INTERVAL;
         let vitality_reduction = attributes.vitality as u64 * 1;
         let spirit_reduction = attributes.spirit as u64 * 1;
@@ -82,7 +82,7 @@ impl PlayerStats {
         let calculated_interval = base_interval - vitality_reduction - spirit_reduction;
         let base_interval = calculated_interval.max(300);
 
-        let equipment_interval_modifier = Self::get_equipment_stat(attributes.player_id, |stats| stats.hp_regeneration_interval.unwrap_or(0));
+        let equipment_interval_modifier = Self::get_equipment_stat(attributes.player_id, |stats| stats.energy_regeneration_interval.unwrap_or(0));
 
         (base_interval - equipment_interval_modifier).max(300)
     }
@@ -97,8 +97,8 @@ impl PlayerStats {
         let updated = server.player_stats_store.update(&self.id, |stats| {
             stats.attack = Self::calculate_attack(&attributes);
             stats.attack_speed = Self::calculate_attack_speed(&attributes);
-            stats.hp_regeneration = Self::calculate_hp_regeneration(&attributes);
-            stats.hp_regeneration_interval = Self::calculate_hp_regen_interval(&attributes);
+            stats.energy_regeneration = Self::calculate_energy_regeneration(&attributes);
+            stats.energy_regeneration_interval = Self::calculate_energy_regeneration_interval(&attributes);
         });
 
         let player_id = self.player_id;

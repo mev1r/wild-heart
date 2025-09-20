@@ -19,14 +19,6 @@ const attackSpeed = computed(() => {
 
   return (1000 / effectiveMs).toFixed(2);
 });
-
-const hpPerSecond = computed(() => {
-  if (!playerStatsStore.hpRegenerationInterval || playerStatsStore.hpRegenerationInterval === 0) {
-    return 0;
-  }
-
-  return ((playerStatsStore.hpRegeneration / playerStatsStore.hpRegenerationInterval) * 1000).toFixed(2);
-})
 </script>
 
 <template>
@@ -47,8 +39,8 @@ const hpPerSecond = computed(() => {
             <div>{{ formatNumber(attackSpeed) }}/s</div>
           </div>
           <div class="flex items-center justify-between">
-            <div>HP Regeneration:</div>
-            <div>{{ formatNumber(hpPerSecond) }}/s</div>
+            <div>Energy Regeneration:</div>
+            <div>{{ formatNumber(playerStatsStore.energyPerSecond) }}/s</div>
           </div>
         </div>
       </div>

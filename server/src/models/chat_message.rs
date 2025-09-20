@@ -30,18 +30,6 @@ impl ChatMessage {
             timestamp: Utc::now(),
         }
     }
-
-    pub fn general(sender: String, content: String) -> Self {
-        Self::new(sender, None, ChatKind::General, content)
-    }
-
-    pub fn trade(sender: String, content: String) -> Self {
-        Self::new(sender, None, ChatKind::Trade, content)
-    }
-
-    pub fn whisper(sender: String, recipient: String, content: String) -> Self {
-        Self::new(sender, Some(recipient), ChatKind::Whisper, content)
-    }
 }
 
 impl super::Model for ChatMessage {

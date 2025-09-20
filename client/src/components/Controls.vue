@@ -107,31 +107,6 @@ const canResurrect = computed(() => {
           <div>
             <Tooltip
                 :class="{
-                'pointer-events-none opacity-50': expeditionsStore.duration === 0,
-              }"
-                icon="game-icons:pointy-sword"
-                title="Start Attacking"
-                type="action"
-            >
-              <template #trigger>
-                <Section
-                    class="w-[40px] h-[40px] flex items-center justify-center text-zinc-500 active:scale-95 active:brightness-100 transition-all hover:brightness-130"
-                    @click="playerStateStore.attack"
-                >
-                  <Icon :width="24" icon="game-icons:pointy-sword"/>
-                  <Transition name="fade">
-                    <GlassCover v-if="playerStateStore.state?.is_attacking"/>
-                  </Transition>
-                </Section>
-              </template>
-              <div class="text-sm text-zinc-500 leading-none">
-                Start Attacking.
-              </div>
-            </Tooltip>
-          </div>
-          <div>
-            <Tooltip
-                :class="{
                   'pointer-events-none opacity-50': expeditionsStore.duration === 0,
                 }"
                 icon="game-icons:card-pickup"
@@ -151,29 +126,6 @@ const canResurrect = computed(() => {
               </template>
               <div class="text-sm text-zinc-500 leading-none">
                 Start Looting Items.
-              </div>
-            </Tooltip>
-          </div>
-          <div>
-            <Tooltip
-                :class="{
-                  'pointer-events-none opacity-50': !canResurrect,
-                }"
-                icon="game-icons:ankh"
-                title="Resurrect"
-                type="action"
-            >
-              <template #trigger>
-                <Section
-                    class="relative w-[40px] h-[40px] flex items-center justify-center text-zinc-500 active:scale-95 active:brightness-100 transition-all hover:brightness-130"
-                    @click="playerStateStore.resurrect"
-                >
-                  <Icon :width="24" icon="game-icons:ankh"/>
-                </Section>
-              </template>
-              <div class="text-sm text-zinc-500 leading-none">
-                Brings the character back to life with 25% HP and 25% MP, but at
-                the cost of 10% of total experience.
               </div>
             </Tooltip>
           </div>

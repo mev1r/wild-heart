@@ -41,9 +41,6 @@ impl MessageHandler {
             IncomingEvent::EndExpedition => {
                 self.handle_end_expedition().await
             }
-            IncomingEvent::ToggleAttack => {
-                self.handle_toggle_attack().await
-            }
             IncomingEvent::ToggleLoot => {
                 self.handle_toggle_loot().await
             }
@@ -64,7 +61,7 @@ impl MessageHandler {
 
         if data.kind == SlotKind::Compass {
             let has_active_expedition = server.expeditions_store
-                .find_by(|e| e.participant_id == self.player_id && e.ended_at > Utc::now())
+                .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
                 .is_some();
 
             if has_active_expedition {
@@ -268,7 +265,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         let already_active = server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Utc::now())
+            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
             .is_some();
 
         if already_active {
@@ -288,11 +285,9 @@ impl MessageHandler {
         }
 
         let stats = item.stats.as_ref().ok_or("Compass has no stats")?;
-        let duration_ms = stats.expedition_duration.ok_or("Compass has no expedition_duration")?;
         let kind = stats.expedition_kind.clone().unwrap_or(ExpeditionKind::Hunt);
 
-        let ended_at = Utc::now() + chrono::Duration::milliseconds(duration_ms as i64);
-        let expedition = Expedition::new(self.player_id, kind, ended_at);
+        let expedition = Expedition::new(self.player_id, kind);
 
         server.expeditions_store.insert(expedition.clone())
             .map_err(|e| format!("Failed to store expedition: {}", e))?;
@@ -307,11 +302,11 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         let active = server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Utc::now())
+            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
             .ok_or("No active expedition to end")?;
 
         let _ = server.expeditions_store.update(&active.id, |exp| {
-            exp.ended_at = Utc::now();
+            exp.ended_at = Some(Utc::now());
         })?;
 
         let player_state = server.player_state_store
@@ -319,42 +314,10 @@ impl MessageHandler {
             .ok_or("Player state not found")?;
 
         let updated_state = server.player_state_store.update(&player_state.id, |state| {
-            state.is_attacking = false;
             state.is_looting = false;
-            state.target_id = None;
         })?;
 
         ws_manager.send_log_to_player(self.player_id, "You left the expedition.".to_string()).await;
-
-        Ok(vec![OutgoingMessage::new(
-            OutgoingEvent::PlayerState,
-            Box::new(updated_state) as Box<dyn erased_serde::Serialize + Send>,
-        )])
-    }
-
-    async fn handle_toggle_attack(&self) -> Result<Vec<OutgoingMessage<Box<dyn erased_serde::Serialize + Send>>>, String> {
-        let server = GameServer::global();
-        let ws_manager = WebSocketManager::global();
-
-        server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Utc::now())
-            .ok_or("No active expedition to attack in")?;
-
-        let player_state = server.player_state_store
-            .find_by(|state| state.player_id == self.player_id)
-            .ok_or("Player state not found")?;
-
-        let updated_state: PlayerState;
-        if player_state.is_attacking {
-            updated_state = server.player_state_store.update(&player_state.id, |state| {
-                state.is_attacking = false;
-                state.target_id = None;
-            })?;
-            ws_manager.send_log_to_player(self.player_id, "You stopped attacking!".to_string()).await;
-        } else {
-            updated_state = server.player_state_store.update(&player_state.id, |state| { state.is_attacking = true; })?;
-            ws_manager.send_log_to_player(self.player_id, "You started attacking".to_string()).await;
-        }
 
         Ok(vec![OutgoingMessage::new(
             OutgoingEvent::PlayerState,
@@ -367,7 +330,7 @@ impl MessageHandler {
         let ws_manager = WebSocketManager::global();
 
         server.expeditions_store
-            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Utc::now())
+            .find_by(|e| e.participant_id == self.player_id && e.ended_at > Option::from(Utc::now()))
             .ok_or("No active expedition to loot in")?;
 
         let player_state = server.player_state_store

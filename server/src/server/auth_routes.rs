@@ -83,7 +83,7 @@ pub async fn register(
         }
     }
 
-    let training_sword_stats = ItemStats::new(Some(20), Some(200), None, None, None, None);
+    let training_sword_stats = ItemStats::new(Some(20), Some(200), None, None, None);
     let training_sword = Item::new(
         player_id,
         ItemKind::Weapon,
@@ -104,7 +104,7 @@ pub async fn register(
     training_sword.add_to_empty_slot(SlotKind::Inventory)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e))?;
 
-    let hunter_compass_stats = ItemStats::new(None, None, None, None, Some(60000), Some(ExpeditionKind::Hunt));
+    let hunter_compass_stats = ItemStats::new(None, None, None, None, Some(ExpeditionKind::Hunt));
     let hunter_compass = Item::new(
         player_id,
         ItemKind::Compass,

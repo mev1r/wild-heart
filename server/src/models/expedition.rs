@@ -8,17 +8,17 @@ pub struct Expedition {
     pub participant_id: Uuid,
     pub kind: ExpeditionKind,
     pub started_at: DateTime<Utc>,
-    pub ended_at: DateTime<Utc>,
+    pub ended_at: Option<DateTime<Utc>>,
 }
 
 impl Expedition {
-    pub fn new(participant_id: Uuid, kind: ExpeditionKind, ended_at: DateTime<Utc>) -> Self {
+    pub fn new(participant_id: Uuid, kind: ExpeditionKind) -> Self {
         Self {
             id: Uuid::new_v4(),
             participant_id,
             kind,
             started_at: Utc::now(),
-            ended_at,
+            ended_at: None,
         }
     }
 }

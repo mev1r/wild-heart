@@ -5,10 +5,7 @@ use uuid::Uuid;
 pub struct PlayerState {
     pub id: Uuid,
     pub player_id: Uuid,
-    pub in_combat: bool,
-    pub is_attacking: bool,
     pub is_looting: bool,
-    pub target_id: Option<Uuid>,
 }
 
 impl PlayerState {
@@ -16,10 +13,7 @@ impl PlayerState {
         Self {
             id: Uuid::new_v4(),
             player_id,
-            in_combat: false,
-            is_attacking: false,
             is_looting: false,
-            target_id: None,
         }
     }
 }

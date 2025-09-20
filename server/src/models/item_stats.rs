@@ -5,9 +5,8 @@ use serde::{Deserialize, Serialize};
 pub struct ItemStats {
     pub attack: Option<u64>,
     pub attack_speed: Option<u64>,
-    pub hp_regeneration: Option<u64>,
-    pub hp_regeneration_interval: Option<u64>,
-    pub expedition_duration: Option<u64>,
+    pub energy_regeneration: Option<u64>,
+    pub energy_regeneration_interval: Option<u64>,
     pub expedition_kind: Option<ExpeditionKind>,
 }
 
@@ -15,17 +14,15 @@ impl ItemStats {
     pub fn new(
         attack: Option<u64>,
         attack_speed: Option<u64>,
-        hp_regeneration: Option<u64>,
-        hp_regeneration_interval: Option<u64>,
-        expedition_duration: Option<u64>,
+        energy_regeneration: Option<u64>,
+        energy_regeneration_interval: Option<u64>,
         expedition_kind: Option<ExpeditionKind>,
     ) -> Self {
         Self {
             attack,
             attack_speed,
-            hp_regeneration,
-            hp_regeneration_interval,
-            expedition_duration,
+            energy_regeneration,
+            energy_regeneration_interval,
             expedition_kind,
         }
     }

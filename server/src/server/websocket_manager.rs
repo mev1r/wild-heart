@@ -83,6 +83,7 @@ impl WebSocketManager {
         self.send_to_player(player_id, msg).await;
     }
 
+    #[allow(dead_code)]
     pub async fn broadcast_log(&self, text: String) {
         let msg = OutgoingMessage::new(
             OutgoingEvent::Log,

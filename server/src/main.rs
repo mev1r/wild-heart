@@ -1,5 +1,5 @@
 use crate::game_loop::GameLoop;
-use crate::models::{ChatMessage, Expedition, Item, Mob, Player, PlayerAttributes, PlayerResource, PlayerState, PlayerStats, Slot};
+use crate::models::{ChatMessage, Expedition, Item, Player, PlayerAttributes, PlayerResource, PlayerState, PlayerStats, Slot};
 use crate::server::GameServer;
 use crate::store::Store;
 use std::sync::Arc;
@@ -63,11 +63,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "expeditions",
     )?;
 
-    let mobs_store: Store<Mob> = Store::with_persistence(
-        db.clone(),
-        "mobs",
-    )?;
-
     let game_server = Arc::new(GameServer::new(
         player_store,
         player_resource_store,
@@ -78,7 +73,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         slots_store,
         chat_store,
         expeditions_store,
-        mobs_store,
     ));
 
     GameServer::initialize_global(game_server.clone())
