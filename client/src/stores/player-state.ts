@@ -44,4 +44,5 @@ export type PlayerState = {
     in_combat: boolean;
     is_attacking: boolean;
     is_looting: boolean;
+    target_id: string;
 };

@@ -46,7 +46,7 @@ impl Mob {
         let player_id = player_resource.player_id.clone();
 
         let updated_resource = server.player_resource_store.update(&player_resource.id, |resource| {
-            resource.hp -= self.damage;
+            resource.hp = (resource.hp - self.damage).max(0);
         })?;
 
         ws_manager.send_to_player(player_id, OutgoingMessage::new(

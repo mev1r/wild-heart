@@ -58,7 +58,17 @@ export const useExpeditionsStore = defineStore("expeditions", () => {
             const message = echo.parsePayload<Mob>(value);
 
             if (message.event === EVENT_MOB) {
-                mobs.value.push(message.data);
+                const existingMob = mobs.value.find(mob => mob.id === message.data.id);
+
+                if (message.data.hp === 0) {
+                    mobs.value = mobs.value.filter(mob => mob.id !== message.data.id);
+                } else if (existingMob) {
+                    mobs.value = mobs.value.map(mob =>
+                        mob.id === message.data.id ? message.data : mob
+                    );
+                } else {
+                    mobs.value = [...mobs.value, message.data];
+                }
             }
         }
     );

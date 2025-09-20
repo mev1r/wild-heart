@@ -8,6 +8,7 @@ pub struct PlayerState {
     pub in_combat: bool,
     pub is_attacking: bool,
     pub is_looting: bool,
+    pub target_id: Option<Uuid>,
 }
 
 impl PlayerState {
@@ -18,6 +19,7 @@ impl PlayerState {
             in_combat: false,
             is_attacking: false,
             is_looting: false,
+            target_id: None,
         }
     }
 }

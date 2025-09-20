@@ -297,7 +297,7 @@ impl MessageHandler {
         server.expeditions_store.insert(expedition.clone())
             .map_err(|e| format!("Failed to store expedition: {}", e))?;
 
-        ws_manager.send_log_to_player(self.player_id, "You started the expedition".to_string()).await;
+        ws_manager.send_log_to_player(self.player_id, "You started the expedition.".to_string()).await;
 
         Ok(vec![])
     }
@@ -321,9 +321,10 @@ impl MessageHandler {
         let updated_state = server.player_state_store.update(&player_state.id, |state| {
             state.is_attacking = false;
             state.is_looting = false;
+            state.target_id = None;
         })?;
 
-        ws_manager.send_log_to_player(self.player_id, "You left the expedition".to_string()).await;
+        ws_manager.send_log_to_player(self.player_id, "You left the expedition.".to_string()).await;
 
         Ok(vec![OutgoingMessage::new(
             OutgoingEvent::PlayerState,
@@ -345,7 +346,10 @@ impl MessageHandler {
 
         let updated_state: PlayerState;
         if player_state.is_attacking {
-            updated_state = server.player_state_store.update(&player_state.id, |state| { state.is_attacking = false; })?;
+            updated_state = server.player_state_store.update(&player_state.id, |state| {
+                state.is_attacking = false;
+                state.target_id = None;
+            })?;
             ws_manager.send_log_to_player(self.player_id, "You stopped attacking!".to_string()).await;
         } else {
             updated_state = server.player_state_store.update(&player_state.id, |state| { state.is_attacking = true; })?;

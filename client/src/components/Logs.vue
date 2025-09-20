@@ -44,7 +44,7 @@ watch(logs, () => {
           ref="logsContainer"
           class="flex flex-col gap-1 overflow-auto scroller h-[178px] text-sm p-2 shadow-inner-custom bg-slot/60 border border-[#2a2a2acc] border-t-[#191919cc] border-b-[#3a3a3acc]"
       >
-        <TransitionGroup appear name="chat" tag="div">
+        <TransitionGroup appear name="chat">
           <div
               v-for="log in logs"
               :key="`${log.id}`"
